@@ -13,6 +13,7 @@ after_success:
     - docker build -t michaeljkavanagh/multi-nginx ./nginx
     - docker build -t michaeljkavanagh/multi-server ./server
     - docker build -t michaeljkavanagh/multi-worker ./worker
+    
     # Login to the docker CLI
     - echo "$docker_password" | docker login -u "$docker_id" --password-stdin
 
@@ -21,3 +22,19 @@ after_success:
     - docker push michaeljkavanagh/multi-nginx
     - docker push michaeljkavanagh/multi-server
     - docker push michaeljkavanagh/multi-worker
+
+    #access_key_id: $AWS_ACCESS_KEY
+    #secret_access_key: $AWS_SECRET_KEY
+
+deploy:
+    provider: elasticbeanstalk
+    region: eu-west-1
+    app: multi-docker
+    env: MultiDocker-env
+    bucket_name: elasticbeanstalk-eu-west-1-031989930407
+    bucket_path: docker-multi
+    on: 
+      branch: master
+      access_key_id: $AWS_ACCESS_KEY
+      secret_access_key: 
+        secure: $AWS_SECRET_KEY
